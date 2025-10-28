@@ -8,6 +8,7 @@
   <meta property="og:title" content="Hello World App" />
   <meta property="og:description" content="Welcome to my first Azure Static Web App!" />
   <meta property="og:type" content="website" />
+  <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -15,6 +16,7 @@
       background: linear-gradient(to right, #f0f4f8, #e0eafc);
       color: #333;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -29,15 +31,49 @@
       font-size: 1.2rem;
       color: #555;
     }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
   </style>
 </head>
 <body>
   <main>
-    <h1>Hello World - says Poorva 🌍</h1>
+    <h1>Hello World - Says Poorva 🌍</h1>
     <p>Welcome to Poorva's first static web app on Azure!</p>
+    <button onclick="signIn()">Login with Microsoft</button>
   </main>
+
   <script>
-    console.log("Hello from Azure Static Web App!");
+    const msalConfig = {
+      auth: {
+        clientId: "YOUR_CLIENT_ID", // Replace with your Azure AD App Registration client ID
+        authority: "https://login.microsoftonline.com/YOUR_TENANT_ID", // Replace with your tenant ID
+        redirectUri: window.location.href
+      }
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    function signIn() {
+      msalInstance.loginPopup({
+        scopes: ["user.read"]
+      }).then(response => {
+        alert("Welcome, " + response.account.username);
+        console.log("Login successful:", response);
+      }).catch(error => {
+        console.error("Login failed:", error);
+      });
+    }
   </script>
 </body>
 </html>
